@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Quote Comment
+{% endblock %}
+
+{% block content %}
+    {% if comment_id %}
+  <div class="divider"></div>
+      <div class="row">
+      <div class="col-sm-12 text-center">
+      <b class="page-header-text"> QUOTE COMMENT </b>
+      </div>
+      </div>
+  <div class="divider"></div>
+        <form role="form" action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
+          <div class="row">
+          <div class="col-sm-offset-1 col-sm-10">
+          <div class="form-group">
+            <label for="comment" class="text-left">Click An Emoji To Use</label><br/>
+            {% load emoticons_tags %}
+            {% emoticons_index as emoticons_list %}
+            {% for emoticons in emoticons_list %}
+            <span onclick="myFun('{{ emoticons|last }}')">{{ emoticons.0|emoticons }}</span>
+            {% endfor %}
+          </div>
+          </div>
+          </div>
+          <div class="row">
+          <div class="col-sm-offset-1 col-sm-4">
+          <div class="form-group">
+            <label for="color" class="text-left">Comment Text Color</label>
+            <b>{{ form.color }}</b>
+          </div>
+          </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-offset-1 col-sm-10">
+            <div class="form-group">
+                <label for="comment" class="text-left">The Comment You Want To Quote</label>
+                <textarea class="form-control" id="to_be_quoted" rows="8" maxlength="990" disabled=""> {{ comment_to_be_quoted }} 
+                </textarea>
+            </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-offset-1 col-sm-10">
+            <div class="form-group">
+                <label for="message" class="text-left">Post Details</label> 
+                <b style="color:red"> {{ form.comment.errors }} </b>
+                <div class="panel panel-default">
+                <div class="panel-heading">
+                <span class="textformatfirst" data-toggle="tooltip" title="Bold"> 
+                <i class="fa fa-bold" onclick="TextF('b')"></i> </span> &middot
+                <span class="textformat" data-toggle="tooltip" title="Italic"> 
+                <i class="fa fa-italic" onclick="TextF('i')"></i> </span> &middot
+                <span class="textformat" data-toggle="tooltip" title="Underline"> 
+                <i class="fa fa-underline" onclick="TextF('u')"></i> </span> &middot
+                <span class="textformat" data-toggle="tooltip" title="Strike"> 
+                <i class="fa fa-strikethrough" onclick="TextF('s')"></i> </span> &middot
+                <span class="textformat" data-toggle="tooltip" title="Url"> 
+                <i class="fa fa-link" onclick="TextF('url')"></i> </span> &middot
+                <span class="textformat" data-toggle="tooltip" title="Code"> 
+                <i class="fa fa-code" onclick="TextF('code')"></i> </span> &middot
+                <span class="textformat" data-toggle="tooltip" title="Pre tag"> 
+                <i class="fa fa-codepen" onclick="TextF('pre')"></i> </span>
+                </div>
+                <div class="panel-body">
+                {{ form.comment }}
+                </div>
+                </div>
+            </div>
+            </div>
+          </div>
+          <div class="row">
+          <div class="col-sm-offset-1 col-sm-6">
+          <div class="form-group">
+            <label for="color" class="text-left">Upload Image</label><b style="color:red"> {{ form.attachments.errors }} </b>
+            {{ form.attachments }}
+            <p class="help-block"> You are choose a maximum of 4 pix </p>
+          </div>
+          </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-offset-1">
+                &nbsp&nbsp&nbsp&nbsp<button class="btn btn-primary" style="width:150px;height:40px">
+                <b>Quote Comment</b></button>
+            </div>
+          </div>
+        </td>
+        </tr>
+        </form>  
+    {% else %}
+      <div class="divider"></div>
+      <div class="row"><div class="col-sm-12 text-center"><b>Error 404: Page Not Found</b> <br/>
+      <p> Goto <a href="{% url 'home' %}">Homepage</a> </p> </div></div>
+      <div class="divider"></div>
+    {% endif %} 
+<script type="text/javascript">
+  function myFun(a){
+      var new_text = $('#comment').val() + a + " ";
+      $('#comment').val(new_text);
+  }
+  function TextF(a){
+      var new_text = $('#comment').val() + " [" + a + "] Input Text Here [/" + a + "] ";
+      $('#comment').val(new_text);
+  }
+</script>
+{% endblock %}

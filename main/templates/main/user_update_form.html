@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  <div class="divider"></div>
+  <div class="row">
+  <div class="col-sm-12 text-center">
+  <b class="page-header-text"> EDIT PROFILE </b>
+  </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="row">
+  <div class="col-sm-offset-3 col-sm-6">
+  <div class="form-group">
+	<form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+	{{ form.as_p }}
+	<input class="btn btn-primary" type="submit" value="Update" />
+	</form>
+
+  </div></div></div>
+
+{% endblock %}

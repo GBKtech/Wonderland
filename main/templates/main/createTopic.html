@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Create Topic
+{% endblock %}
+
+{% block content %}
+    {% if section_name %}
+  <div class="divider"></div>
+      <div class="row">
+      <div class="col-sm-12 text-center">
+      <b class="page-header-text"> CREATE NEW TOPIC </b> <span class="text-muted">({{section_name|title}} Section)</span>
+      </div>
+      </div>
+  <div class="divider"></div>
+        <form role="form" action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
+          <div class="row">
+          <div class="col-sm-offset-1 col-sm-10">
+          <div class="form-group">
+            <label for="comment" class="text-left">Click An Emoji To Use</label><br/>
+            {% load emoticons_tags %}
+            {% emoticons_index as emoticons_list %}
+            {% for emoticons in emoticons_list %}
+            <span onclick="myFun('{{ emoticons|last }}')" class="emoji">{{ emoticons.0|emoticons }}</span>
+            {% endfor %}
+          </div>
+          </div>
+          </div>
+          <div class="row">
+          <div class="col-sm-offset-1 col-sm-4">
+          <div class="form-group">
+            <label for="color" class="text-left">Comment Text Color</label>
+            <b>{{ form.color }}</b>
+          </div>
+          </div>
+          </div> 
+          <div class="row">
+            <div class="col-sm-offset-1 col-sm-10">
+            <div class="form-group">
+                <label for="subject" class="text-left">Subject</label>
+                <b style="color:red"> {{ form.subject.errors }} </b>
+                {{ form.subject }}
+            </div>
+            </div>
+          </div> 
+          <div class="row">
+            <div class="col-sm-offset-1 col-sm-10">
+            <div class="form-group">
+                <label for="message" class="text-left">Post Details</label> 
+                <b style="color:red"> {{ form.message.errors }} </b>
+                <div class="panel panel-default">
+                <div class="panel-heading">
+                <span class="textformatfirst" data-toggle="tooltip" title="Bold"> 
+                <i class="fa fa-bold" onclick="TextF('b')"></i> </span> &middot
+                <span class="textformat" data-toggle="tooltip" title="Italic"> 
+                <i class="fa fa-italic" onclick="TextF('i')"></i> </span> &middot
+                <span class="textformat" data-toggle="tooltip" title="Underline"> 
+                <i class="fa fa-underline" onclick="TextF('u')"></i> </span> &middot
+                <span class="textformat" data-toggle="tooltip" title="Strike"> 
+                <i class="fa fa-strikethrough" onclick="TextF('s')"></i> </span> &middot
+                <span class="textformat" data-toggle="tooltip" title="Url"> 
+                <i class="fa fa-link" onclick="TextF('url')"></i> </span> &middot
+                <span class="textformat" data-toggle="tooltip" title="Code"> 
+                <i class="fa fa-code" onclick="TextF('code')"></i> </span> &middot
+                <span class="textformat" data-toggle="tooltip" title="Pre tag"> 
+                <i class="fa fa-codepen" onclick="TextF('pre')"></i> </span>
+                </div>
+                <div class="panel-body">
+                {{ form.message }}
+                </div>
+                </div>
+            </div>
+            </div>
+          </div>
+          <div class="row">
+          <div class="col-sm-offset-1 col-sm-6">
+          <div class="form-group">
+            <label for="color" class="text-left">Upload Image</label><b style="color:red"> {{ form.attachments.errors }} </b>
+            <span> {{ form.attachments }} </span>
+            <p class="help-block"> You are choose a maximum of 4 pix </p>
+          </div>
+          </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-offset-1">
+                &nbsp&nbsp&nbsp&nbsp<button class="btn btn-primary" style="width:120px;height:40px">
+                <b>Create Topic</b></button>
+            </div>
+          </div>
+        </form> 
+
+        <script type="text/javascript">
+          function myFun(a){
+              var new_text = $('#message').val() + a + " ";
+              $('#message').val(new_text);
+          }
+          function TextF(a){
+              var new_text = $('#message').val() + " [" + a + "] Input Text Here [/" + a + "] ";
+              $('#message').val(new_text);
+          }
+        </script> 
+    {% else %}
+      <div class="divider"></div>
+      <div class="row"><div class="col-sm-12 text-center"><b>Error 404: Page Not Found</b> <br/>
+      <p> Goto <a href="{% url 'home' %}">Homepage</a> </p> </div></div>
+      <div class="divider"></div>
+    {% endif %}  
+
+{% endblock %}   

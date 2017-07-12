@@ -1,0 +1,8 @@
+beautifulsoup4==4.6.0
+Django==1.9
+django-digg-paginator==0.1.2
+django-emoticons==1.2
+django-hitcount==1.2.2
+django-multiupload==0.5.2
+pillow==4.1.1
+pytz==2017.2

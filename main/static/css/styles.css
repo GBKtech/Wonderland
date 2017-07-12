@@ -1,0 +1,130 @@
+.sidebar{
+    margin-top: 20px;
+}
+.divider{
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border: 0;
+  border-top: 1px solid #eeeeee;
+  background: rgb(248,248,248);
+  height: 5px;
+}
+.ctrldivider{
+	 margin-right: 15px;
+	 margin-left: 15px;
+	 background: rgb(240,240,240);
+	 height: 2px;
+}
+.comment_row{
+	padding-left: 10px;
+	padding-right: 10px;
+}
+.col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4,.col-sm-5, .col-sm-6, .col-sm-7 ,.col-sm-8,
+.col-sm-9, .col-sm-10, .col-sm-11 ,.col-sm-12{
+	padding-left: 30px;
+	padding-right: 30px;
+}
+.quote_comment{
+	background: lightgrey;
+	margin-bottom: 10px;
+	margin-top: 10px;
+	padding: 15px;
+	border-radius: 10px;
+}
+.emoji{
+	cursor: pointer;
+}
+.comment{
+	border: 1px solid black;
+	margin-top: 15px;
+	padding: 15px;
+}
+.frame{
+	margin-top: 20px;
+	margin-bottom: 20px;
+	border: 1px solid #eeeeee;
+	border-radius: 20px;
+}
+.banner{
+	font-size: 30px;
+	text-align: center;
+	text-transform: capitalize;
+}
+.post_li{
+	border-top: 1px solid #FEBD01; 
+  	border-bottom: 1px solid #FEBD01; 
+  	border-radius: 10px;
+  	padding: 10px;
+}
+a, a:hover{
+	color: #3399CC;
+}
+mark{
+	background: lightblue;
+}
+#plike_link, #clike_link, .quote, .quote:hover, .edit, .edit:hover{
+	font-size: 15px;
+	cursor: pointer;	
+}
+.pin_post:hover, .fp_mode:hover{
+	cursor: pointer;
+}
+.pin_post{
+	width: 20px;
+	height: 20px;
+	color: blue; 
+}
+.textformat, .textformat:hover{
+	padding-right: 10px;
+	padding-left: 10px;
+	cursor: pointer;
+}
+.textformatfirst, .textformatfirst:hover{
+	padding-right: 10px;
+	cursor: pointer;
+}
+.like_btn{
+	border-radius: 30px;
+	color: red;
+}
+#plike_link:hover, #clike_link:hover{
+	text-decoration: underline;
+	color: #3399CC;
+}
+
+.like{
+	padding-left: 5px;
+}
+.page-header-text{
+	font-size: 20px;
+}
+.comment_by, .comment_by>b>a{
+	font-size: 15px;
+	padding-top: 5px;
+	color: rgb(56,56,56);
+}
+.quote_comment_by, .quote_comment_by>a{
+	font-size: 15px;
+	padding-top: 5px;
+	color: rgb(100,100,100);
+}
+.quote_comment_made{
+	padding-left: 20px;
+	padding-right: 20px;
+}
+body{
+	background: rgb(248,248,248);
+}
+.frame{
+	background: #ffffff;
+	padding: 10px;
+	padding-top: 20px;
+}
+.comment_made, .post_made{
+	padding-top: 5px;
+}
+.topic{
+	color: rgb(64,0,0);
+	font-size: 20px;
+	margin: 2px;
+}

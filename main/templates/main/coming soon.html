@@ -1,0 +1,32 @@
+
+
+{% for comment in  post.comment_set.all %}
+<tr><td class="comment_by"> <b>Comment By:</b> {{ comment.comment_by.username }} </td></tr>
+<tr><td>
+{% if comment.this_comment_quote == null %}
+  <p class="comment_made"> {{ comment.comment_made }} </p> 
+  {% if user.is_authenticated %}
+  <ul class="list-inline">
+  <li>
+  <a href="{% url 'like' 'commentAction' comment.id post.id %}" class="like_link">(Like)</a> <b class="like"> {{ comment.like_set.all.count }} {% if comment.like_set.all.count <= 1 %} like {% else %} likes {% endif %}</b></li>
+  <li><a href=""  class="quote">(Quote)</a>
+  </li>
+  </ul>
+  {% endif %}
+{% else %}
+  <div class="quote_comment"> 
+  <b class="comment_by"> {{ comment.this_comment_quote.comment_by.username }}</b><br/> 
+  <i class="comment_made">{{ comment.this_comment_quote.comment_made }} </i>
+  </div>
+  <p class="comment_made"> {{ comment.comment_made }} </p>
+  {% if user.is_authenticated %}
+  <ul class="list-inline">
+  <li>
+  <a href="{% url 'like' 'commentAction' comment.id post.id %}" class="like_link">(Like)</a> <b class="like"> {{ comment.like_set.all.count }} {% if comment.like_set.all.count <= 1 %} like {% else %} likes {% endif %}</b></li>
+  <li><a href=""  class="quote">(Quote)</a>
+  </li>
+  </ul>
+  {% endif %}
+{% endif %}
+</td></tr>
+{% endfor %}

@@ -1,0 +1,7 @@
+*.pyc
+*__pycache__
+*forumenv
+*db.sqlite3
+*/static
+*.DS_Store
+*sqlite3

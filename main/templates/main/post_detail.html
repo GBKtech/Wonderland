@@ -1,0 +1,243 @@
+{% extends "base.html" %}
+{% load static %}
+{% load emoticons_tags %}
+{% load bbcode_tags %}
+{% load humanize %}
+
+{% block title %}
+  {% if post %} {{ post.title|capfirst }} {% else %} Lets Talk! {% endif %}
+{% endblock %}
+
+{% block external %}
+    <script type="text/javascript" src="{% static 'js/custom.js' %}"></script>
+{% endblock %} 
+
+{% block content %}
+{% if post %}
+<div class="divider"></div>
+  <div class="row">
+  <div class="col-sm-12">
+  <center class="topic"> <b>{{ post.title|title }} 
+  (<a href="{% url 'section' post.section.name %}">{{ post.section.name|title }}</a>) </b></center>
+  </div>
+  </div>
+<div class="divider"></div>
+{% if user.is_authenticated %}
+  <div class="row">
+  <div class="col-sm-12 text-right">
+  <b><a href="{% url 'comment' post.id post.title|slugify|slice:'0:50' %}"> Reply To Post </a></b>
+  </div>
+  </div>
+<div class="divider"></div>
+{% endif %}
+  
+<div class="row">
+{% emoticons %}
+<div class="row comment_row">
+<div class="col-sm-2 comment_by">
+<b><a href="{% url 'userProfile' post.post_by.user.username %}"> <i class="fa fa-user"></i> {{ post.post_by|capfirst }} </a> </b>
+</div>
+
+<div class="col-sm-10">
+<p style="color: {{ post.color }}" class="post_made">{{post.post_made|safe|bbcode|linebreaksbr}}</p> 
+{% for pix in post.post_pix.all %}
+<img src="{{ pix.file.url }}" alt="No Image"/>
+{% if forloop.last %} <br/><br/> {% endif %}
+{% endfor %}
+{% if user.is_authenticated %}
+  <ul class="list-inline">
+  <li></li>
+  <li>
+  <b class="like p{{post.id}}">
+  {{ post.total_likes }} 
+  </b>
+  <span id="plike_link" class="pl{{post.id}}" name="{{post.id}}">
+  {% if user in post.post_likes.all %} 
+  <span class="like_btn"><i class="fa fa-heart" id="pheart" data-toggle="tooltip" title="Unlike"></i></span>
+  {% else %} 
+  <span class="like_btn"><i class="fa fa-heart-o" id="pheart" data-toggle="tooltip" title="Like"></i></span> 
+  {% endif %}
+  </span>
+  </li>
+  {% if user.username == post.post_by.user.username %}
+  <li><b>&middot</b></li> 
+  <a href="{% url 'post_update' post.id %}" class="edit" data-toggle="tooltip" title="Edit Post"><i class="fa fa-edit"></i></a> </li>
+  {% endif %}
+  <li><b class="text-success msg pmsg{{post.id}}"></b></li>
+  <li class="pull-right" class="text-muted"> <i class="fa fa-calendar"></i> {{post.created|naturalday}} at  {{post.created|time:"H:i A"}} </li>
+  </ul>
+{% endif %}
+</div>
+</div>
+<div class="divider ctrldivider"></div>
+
+
+{% for comment in comment_list %}
+
+<div class="row comment_row">
+
+<div class="col-sm-2 comment_by">
+<b><a href="{% url 'userProfile' comment.comment_by.user.username|lower %}"> 
+<i class="fa fa-user"></i> {{ comment.comment_by|capfirst }} </a> </b>
+</div>
+
+<div class="col-sm-10" id="{{ comment.id }}">
+{% if comment.this_comment_quote == null %}
+  <p style="color: {{ comment.color }}" class="comment_made"> {{ comment.comment_made|safe|bbcode|linebreaksbr }} </p> 
+  {% for pix in comment.comment_pix.all %}
+  <img src="{{ pix.file.url }}" alt="No Image"/>
+  {% if forloop.last %} <br/><br/> {% endif %}
+  {% endfor %}
+  <ul class="list-inline">
+  {% if user.is_authenticated %}
+  <li></li>
+  <li>
+  <b class="like c{{comment.id}}">   
+  {{ comment.total_likes }}
+  </b>
+  <span id="clike_link" class="cl{{comment.id}}" onclick="myFun('{{comment.id}}')">
+  {% if user in comment.comment_likes.all %}
+   <span class="like_btn"><i class="fa fa-heart" id="cheart{{comment.id}}" data-toggle="tooltip" title="Unlike"></i></span>
+  {% else %}
+   <span class="like_btn"><i class="fa fa-heart-o" id="cheart{{comment.id}}" data-toggle="tooltip" title="Like"></i></span>
+  {% endif %}
+  </span>
+  </li> <b>&middot</b>
+  <li><a href="{% url 'quote' comment.id %}" class="quote" data-toggle="tooltip" title="Quote"><i class="fa fa-quote-left"></i></a></li> 
+  {% if user.username == comment.comment_by.user.username %}
+  <li><b>&middot</b></li><li> <a href="{% url 'comment_update' comment.id %}" class="edit" data-toggle="tooltip" title="Edit Comment">
+  <i class="fa fa-edit"></i></a> </li> 
+  {% endif %}
+  <li><b class="text-success msg cmsg{{comment.id}}"></b></li>
+  {% endif %}
+  <li class="pull-right" class="text-muted"> <i class="fa fa-calendar"></i> {{comment.created|naturalday}} at {{comment.created|time:"H:i A"}} </li>
+  </ul>
+{% else %}
+  <div class="quote_comment"> 
+  <b class="quote_comment_by"> <a href="{% url 'userProfile' comment.this_comment_quote.comment_by.user.username|lower %}"> 
+  <i class="fa fa-user"></i> {{ comment.this_comment_quote.comment_by|capfirst }} </a> </b><br/> 
+  <i class="quote_comment_made">{{ comment.this_comment_quote.comment_made|safe|bbcode|linebreaksbr }} </i>
+  </div>
+  <p style="color: {{ comment.color }}"> {{ comment.comment_made|safe|bbcode|linebreaksbr }} </p>
+  {% for pix in comment.comment_pix.all %}
+  <img src="{{ pix.file.url }}" alt="No Image"/>
+  {% if forloop.last %} <br/><br/> {% endif %}
+  {% endfor %}
+  <ul class="list-inline">
+  <li></li>
+  {% if user.is_authenticated %}
+  <li>
+  <b class="like c{{comment.id}}">  
+  {{ comment.total_likes }}
+  </b>
+  <span id="clike_link" class="cl{{comment.id}}" onclick="myFun('{{comment.id}}')">
+  {% if user in comment.comment_likes.all %}
+   <span class="like_btn"><i class="fa fa-heart" id="cheart{{comment.id}}" data-toggle="tooltip" title="Unlike"></i></span>
+  {% else %}
+   <span class="like_btn"><i class="fa fa-heart-o" id="cheart{{comment.id}}" data-toggle="tooltip" title="Like"></i></span>
+  {% endif %}
+  </span>
+  </li> <b>&middot</b>
+  <li><a href="{% url 'quote' comment.id %}" class="quote" data-toggle="tooltip" title="Quote Comment"><i class="fa fa-quote-left"></i></a></li> 
+  {% if user.username == comment.comment_by.user.username %}
+  <li><b>&middot</b></li><li> <a href="{% url 'comment_update' comment.id %}" class="edit" data-toggle="tooltip" title="Edit Comment"> <i class="fa fa-edit"></i></a> </li> 
+  {% endif %}
+  <li><b class="text-success msg cmsg{{comment.id}}"></b></li>
+  {% endif %}
+  <li class="pull-right" class="text-muted"> <i class="fa fa-calendar"></i> {{comment.created|naturalday}} at {{comment.created|time:"H:i A"}} </li>
+  </ul>
+{% endif %}
+</div>
+</div>
+<div class="divider ctrldivider"></div>
+{% endfor %}
+{% endemoticons %}
+</div>
+<script type="text/javascript">
+  
+  $('#plike_link').click(function(){
+    var name = $(this).attr('name'); var likename = '.p'+name; var msgname = '.pmsg'+name; var likelink = '.pl'+name;
+    $.ajax({
+      type: "POST",
+      url: "{% url 'post_like' %}",
+      data: {'slug': name, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+      dataType: "json",
+      success: function(response) {
+        if (response.message == 'You liked this post') { $('#pheart').attr("class", "fa fa-heart"); $('#pheart').attr("title", "Unlike"); }
+        else{ $('#pheart').attr("class", "fa fa-heart-o"); $('#pheart').attr("title", "Like");};
+        $(likename).text((response.likes_count));
+        $(msgname).text((response.message));
+      },
+      error: function(rs, e) {
+        alert(rs.responseText);
+      }
+    });
+  });
+
+  function myFun(a){
+    var name = a; var likename = '.c'+name; var msgname = '.cmsg'+name; var likelink = '.cl'+name; 
+    var cheart = '#cheart'+name
+    $.ajax({
+      type: "POST",
+      url: "{% url 'comment_like' %}",
+      data: {'slug': name, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+      dataType: "json",
+      success: function(response) {
+        if (response.message == 'You liked this comment') { $(cheart).attr("class", "fa fa-heart"); $(cheart).attr("title", "Unlike");}
+        else{ $(cheart).attr("class", "fa fa-heart-o"); $(cheart).attr("title", "Like");};
+        $(likename).text((response.likes_count));
+        $(msgname).text((response.message));
+      },
+      error: function(rs, e) {
+        alert(rs.responseText);
+      }
+    });
+    // $.post("{% url 'comment_like' %}?post=yes", {'slug': name, 'csrfmiddlewaretoken': '{{ csrf_token }}'}
+    // )
+  }
+</script>
+{% if user.is_authenticated %}
+  <div class="row">
+  <div class="col-sm-12 text-right">
+  <b><a href="{% url 'comment' post.id post.title|slugify|slice:'0:50' %}"> Reply To Post </a></b>
+  </div>
+  </div>
+<div class="divider"></div>
+{% endif %}
+
+{% else %}
+  <div class="divider"></div>
+  <div class="row"><div class="col-sm-12 text-center"><b>Error 404: Page Not Found</b> <br/>
+  <p> Goto <a href="{% url 'home' %}">Homepage</a> </p> </div></div>
+  <div class="divider"></div>
+{% endif %}
+
+{% endblock %}
+
+{% block pagination %}
+{% if comment_list.has_other_pages %}
+<div class="row"><div class="col-sm-12 text-center">
+  <ul class="list-inline">
+    {% if comment_list.has_previous %}
+      <li> <a href="?page={{ comment_list.previous_page_number }}">&laquo;</a> </li>
+    {% else %}
+      <li class="disabled"> <span> &laquo; </span> </li>
+    {% endif %}
+
+    {% for i in comment_list.page_range %}
+      {% if not i %}
+        <li> ... </li>
+      {% else %}
+        <li> <a href="?page={{ i }}"> ({{ i }}) </a> </li>
+      {% endif %}
+    {% endfor %}
+
+    {% if comment_list.has_next %}
+      <li> <a href="?page={{ comment_list.next_page_number }}">&raquo;</a> </li>
+    {% else %}
+      <li class="disabled"> <span> &raquo; </span> </li>
+    {% endif %}
+  </ul>
+</div></div>
+{% endif %}
+{% endblock %} 

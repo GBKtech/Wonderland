@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="divider"></div>
+      <div class="row">
+      <div class="col-sm-12 text-center">
+      <b class="page-header-text"> ACCOUNT ACTIVATION </b>
+      </div>
+      </div>
+  <div class="divider"></div>
+  {% if errmsg %}
+      <div class="row"><div class="col-sm-12"> <b class="text-danger"> {{errmsg}} </b> </div></div>
+  {% else %}
+      <div class="row"><div class="col-sm-12"> <b class="text-success"> {{msg}} </b> <a href="{% url 'login' %}">LOGIN</a></div></div>
+  {% endif %}
+{% endblock %}

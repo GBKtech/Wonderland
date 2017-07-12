@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% load hitcount_tags %}
+
+{% block title %}
+   {% if section_name %} {{ section_name|capfirst }} post  {% else %} Lets Talk! {% endif %}
+{% endblock %}
+
+{% block content %}
+        {% if err %}
+      <div class="divider"></div>
+      <div class="row"><div class="col-sm-12 text-center"><b>Error 404: Page Not Found</b> <br/>
+      <p> Goto <a href="{% url 'home' %}">Homepage</a> </p> </div></div>
+      <div class="divider"></div>
+        {% else %}
+    {% if section_list|length == 0 %}
+      <div class="divider"></div>
+        <div class="row">
+        <div class="col-sm-12 text-center">
+        <b class="page-header-text"> {{ section_name|upper }} POSTS  </b> <br/>
+        {% if user.is_authenticated %} <a href="{% url 'createTopic' section_name %}"> Create Topic |</a> {% endif %}
+         <a href="{% url 'popular' section_name %}"> Most Popular </a>
+        </div>
+        </div>
+      <div class="divider"></div>
+      <div class="row"><div class="col-sm-12"> <p class="text-warning">There are no post available.</p> </div></div>
+      <div class="divider"></div>
+    {% elif section_list %}
+        <div class="divider"></div>
+        <div class="row">
+        <div class="col-sm-12 text-center">
+        <b class="page-header-text"> {{ section_name|upper }} POSTS  </b> <br/>
+        {% if user.is_authenticated %} <a href="{% url 'createTopic' section_name %}"> Create Topic </a> | {% endif %}
+        <a href="{% url 'popular' section_name %}"> Most Popular </a>
+        </div>
+        </div>
+        <div class="divider"></div>
+      {% for post in section_list reversed %}
+        {% load static %}
+        <div class="row">
+        <div class="col-sm-2"> <i class="fa fa-calendar"></i> {{ post.created|date:"d M Y" }} </div> 
+        <div class="col-sm-10 each-post"> 
+        <a href="{{ post.get_absolute_url }}">{{ post.title|title }}</a><br/>
+        {% get_hit_count for post as tview %}
+        <span class="text-muted"> {{post.comment_count}} <i class="fa fa-comment"></i> |
+        {{tview}} <i class="fa fa-eye"></i> |
+        <span class="pull-right"> <i class="fa fa-clock-o"></i> {{ post.created|time:"H:i A" }} </span>
+<!--         <span class="text-muted"> | {{ post.created|timesince }} ago </span> -->
+        {% if user.is_authenticated %}
+          {% if post in user_extend.pin_post.all %}
+            <span onclick="Pin_Post('{{post.id}}')" 
+            class="pin_post"><i class="fa fa-star" id="pinimg{{post.id}}"></i></span>
+          {% else %}
+            <span onclick="Pin_Post('{{post.id}}')" 
+            class="pin_post"><i class="fa fa-star-o" id="pinimg{{post.id}}"></i></span>
+          {% endif %}
+          {% if perms.main.can_move_to_fp %} 
+            <span class="fp_mode">
+            | <i class="fa fa-thumbs-up" onclick="Fp_mode('{{post.id}}','y')"></i> 
+            | <i class="fa fa-thumbs-down" onclick="Fp_mode('{{post.id}}','n')"></i> 
+            | <i class="fa fa-trash-o" onclick="Fp_mode('{{post.id}}','t')"></i> &middot
+            </span>
+          {% endif %}
+          <b class="text-success msg pinmsg{{post.id}}"></b> </span>
+        {% endif %}
+        </div>
+      </div>
+      <div class="divider"></div>
+      {% endfor %} 
+    {% endif %} 
+    {% endif %}  
+
+<script type="text/javascript">
+  function Pin_Post(a){
+    var postid = a; var msgname = '.pinmsg'+postid; var pinimg = '#pinimg'+postid;
+    $.ajax({
+      type: "POST",
+      url: "{% url 'pin_post' %}",
+      data: {'slug': postid, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+      dataType: "json",
+      success: function(response) {
+        if (response.message == 'You starred this post') { $(pinimg).attr("class", "fa fa-star"); }
+        else{ $(pinimg).attr("class", "fa fa-star-o" ); };
+        // if (response.likes_count <= 1) { $(likename).text((response.likes_count) + ' like'); }
+        // else{ $(likename).text((response.likes_count) + ' likes'); };
+        $(msgname).text((response.message));
+      },
+      error: function(rs, e) {
+        alert(rs.responseText);
+      }
+    });
+  }
+    function Fp_mode(a, b){
+    var postid = a; var fpmode = b; var msgname = '.pinmsg'+postid;
+    $.ajax({
+      type: "POST",
+      url: "{% url 'change_fp_mode' %}",
+      data: {'pk': postid, 'mode': fpmode, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+      dataType: "json",
+      success: function(response) {
+        $(msgname).text((response.message));
+      },
+      error: function(rs, e) {
+        alert(rs.responseText);
+      }
+    });
+  }
+</script>
+{% endblock %}  
+{% block pagination %}
+{% if section_list.has_other_pages %}
+<div class="row"><div class="col-sm-12 text-center">
+  <ul class="list-inline">
+    {% if section_list.has_previous %}
+      <li> <a href="?page={{ section_list.previous_page_number }}">&laquo;</a> </li>
+    {% else %}
+      <li class="disabled"> <span> &laquo; </span> </li>
+    {% endif %}
+
+    {% for i in section_list.page_range %}
+      {% if not i %}
+        <li> ... </li>
+      {% else %}
+        <li> <a href="?page={{ i }}"> ({{ i }}) </a> </li>
+      {% endif %}
+    {% endfor %}
+
+    {% if section_list.has_next %}
+      <li> <a href="?page={{ section_list.next_page_number }}">&raquo;</a> </li>
+    {% else %}
+      <li class="disabled"> <span> &raquo; </span> </li>
+    {% endif %}
+  </ul>
+</div></div>
+{% endif %}
+{% endblock %} 
+
+
+

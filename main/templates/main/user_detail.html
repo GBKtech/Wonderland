@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}
+  {% if query %} {{ query.get_username|title }} PROFILE {% else %} Lets Talk! {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if query %}
+        {% load static %}
+          <div class="divider"></div>
+          <div class="row">
+          <div class="col-sm-12 text-center">
+          <b class="page-header-text"> {{ query.get_username|upper }} PROFILE  </b>
+          </div>
+          </div>
+          <div class="divider"></div>
+
+          <div class="row">
+          <div class="col-sm-12 text-center">
+          {% if user_extend.profile_pix.file %}
+          <img src="{{ user_extend.profile_pix.file.url }}" alt="No Image"/>
+          {% else %}
+          <img src="{% static "images/avatar.jpg" %}" alt="My image">
+          {% endif %}
+          </div>
+          </div> <br/>
+
+          <div class="row">
+          <div class="col-sm-12 text-center">
+          <b>Username:</b> {{ query.get_username|title }} <br/><br/>
+          <b>Gender:</b> {% if user_extend.gender|title == 'M' %} Male 
+          {% elif user_extend.gender|title == 'F' %} Female {% else %} None {% endif %}<br/><br/>
+          <b>Brief Description:</b> {% if user_extend.brief_desc %} {{ user_extend.brief_desc|title }}
+          {% else %} None {% endif %}<br/><br/>
+          <b>Date Joined:</b> {{ query.date_joined|date:"M d, Y" }} <br/><br/>
+          {% if user.username == query.get_username %}
+            {% if not user_extend.post_set.count == 0 %}
+              <a href="{% url 'allmypost' query.get_username %}"> My Post ({{user_extend.post_set.count}})</a> 
+            {% endif %}
+            {% if not user_extend.comment_set.count == 0 %}
+              | <a href="{% url 'allmycomment' query.get_username %}"> My Comment ({{user_extend.comment_set.count}}) </a>
+            {% endif %}
+          {% else %}
+            {% if not user_extend.post_set.count == 0 %}
+              <a href="{% url 'allmypost' query.get_username %}"> {{ query.get_username|title }}'s Post ({{user_extend.post_set.count}}) </a>
+            {% endif %} 
+            {% if not user_extend.comment_set.count == 0 %}
+              | <a href="{% url 'allmycomment' query.get_username %}"> {{ query.get_username|title }}'s Comment ({{user_extend.comment_set.count}}) </a>
+            {% endif %}
+          {% endif %}
+          </div>
+          </div>
+
+    {% else %}
+      <div class="divider"></div>
+      <div class="row"><div class="col-sm-12 text-center"><b>Error 404: Page Not Found</b> <br/>
+      <p> Goto <a href="{% url 'home' %}">Homepage</a> </p> </div></div>
+      <div class="divider"></div>
+    {% endif %}
+{% endblock %}  
+
+

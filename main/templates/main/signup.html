@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="divider"></div>
+      <div class="row">
+      <div class="col-sm-12 text-center">
+      <b class="page-header-text"> SIGN UP </b>
+      </div>
+      </div>
+  <div class="divider"></div>
+    {% if msg %}
+      <div class="row"><div class="col-sm-12"> <b class="text-danger"> {{msg}} </b> </div></div>
+    {% else %}
+  <div class="row">
+  <div class="col-sm-offset-3 col-sm-6">
+  <div class="form-group">
+  <form method="post" action="">
+    {% csrf_token %}
+      {% for field in form %}
+      <p>
+        {{ field.label_tag }}<br>
+        {{ field }}
+        {% if field.help_text %}
+          <small style="display: none">{{ field.help_text }}</small>
+        {% endif %}
+        {% for error in field.errors %}
+          <p style="color: red">{{ error }}</p>
+        {% endfor %}
+      </p>
+      {% endfor %}
+
+    <button type="submit" class="btn btn-primary">Sign up</button>
+  </form>
+  </div></div></div>
+  {% endif %}
+{% endblock %}
